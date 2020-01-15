@@ -24,6 +24,8 @@ from cleverhans.train import train
 from cleverhans.utils import AccuracyReport, set_log_level
 from cleverhans.utils_tf import model_eval
 
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 FLAGS = flags.FLAGS
 
 NB_EPOCHS = 1

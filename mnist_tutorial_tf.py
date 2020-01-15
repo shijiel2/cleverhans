@@ -25,6 +25,8 @@ from cleverhans.attacks import FastGradientMethod
 from cleverhans.utils import AccuracyReport, set_log_level
 from cleverhans.model_zoo.basic_cnn import ModelBasicCNN
 
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 FLAGS = flags.FLAGS
 
 NB_EPOCHS = 6
