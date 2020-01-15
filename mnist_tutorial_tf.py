@@ -20,7 +20,7 @@ from cleverhans.compat import flags
 from cleverhans.loss import CrossEntropy, CrossEntropyDefence
 from cleverhans.dataset import MNIST
 from cleverhans.utils_tf import model_eval
-from cleverhans.train import train
+from cleverhans.train import train, train_adv
 from cleverhans.attacks import FastGradientMethod
 from cleverhans.utils import AccuracyReport, set_log_level
 from cleverhans.model_zoo.basic_cnn import ModelBasicCNN
@@ -29,7 +29,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 FLAGS = flags.FLAGS
 
-NB_EPOCHS = 3
+NB_EPOCHS = 1
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
 CLEAN_TRAIN = True
@@ -160,9 +160,9 @@ def mnist_tutorial(train_start=0, train_end=60000, test_start=0,
     return fgsm2.generate(x, **fgsm_params)
 
   # loss2 = CrossEntropy(model2, smoothing=label_smoothing, attack=attack)
+  loss2 = CrossEntropyDefence(model2, smoothing=label_smoothing)
   preds2 = model2.get_logits(x)
   adv_x2 = attack(x)
-  loss2 = CrossEntropyDefence(model2, x_advs=[adv_x2])
 
   if not backprop_through_attack:
     # For the fgsm attack used in this tutorial, the attack has zero
@@ -181,7 +181,7 @@ def mnist_tutorial(train_start=0, train_end=60000, test_start=0,
     do_eval(preds2_adv, x_test, y_test, 'adv_train_adv_eval', True)
 
   # Perform and evaluate adversarial training
-  train(sess, loss2, x_train, y_train, evaluate=evaluate2,
+  train_adv(sess, loss2, x_train, y_train, x_train_adv_lst=[x_train], evaluate=evaluate2,
         args=train_params, rng=rng, var_list=model2.get_params())
 
   # Calculate training errors

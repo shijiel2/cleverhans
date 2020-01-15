@@ -70,7 +70,7 @@ class Loss(object):
                    params=self.hparams),
               open(os.path.join(path, 'loss.json'), 'wb'))
 
-  def fprop(self, x, y):
+  def fprop(self, x, y, x_adv_lst=None):
     """Forward propagate the loss.
     Loss should be a scalar value, independent of batch size (i.e. use
     reduce_mean over batch axis, don't use reduce_sum or return a tensor).
@@ -185,21 +185,20 @@ class CrossEntropyDefence(Loss):
   :param x_advs: list, adversrial examples 
   """
 
-  def __init__(self, model, smoothing=0., x_advs=None, **kwargs):
+  def __init__(self, model, smoothing=0., **kwargs):
     if smoothing < 0 or smoothing > 1:
       raise ValueError('Smoothing must be in [0, 1]', smoothing)
     self.kwargs = kwargs
     Loss.__init__(self, model, locals(), None)
     self.smoothing = smoothing
-    self.adv_coeff = [1./len(x_advs)] * len(x_advs)
+    # self.adv_coeff = [1./(len(x_advs) + 1)] * (len(x_advs) + 1)
     self.pass_y = False
     self.attack_params = None
-    self.x_advs = x_advs
 
-  def fprop(self, x, y, **kwargs):
+  def fprop(self, x, y, x_adv_lst, **kwargs):
     kwargs.update(self.kwargs)
-    x = tuple([x].extend(self.x_advs))
-    coeffs = self.adv_coeff
+    x = tuple([x] + x_adv_lst)
+    coeffs = [1./len(x)] * len(x)
 
     # if self.attack is not None:
     #   attack_params = copy.copy(self.attack_params)
