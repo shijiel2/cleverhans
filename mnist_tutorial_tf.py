@@ -17,7 +17,7 @@ import numpy as np
 import tensorflow as tf
 
 from cleverhans.compat import flags
-from cleverhans.loss import CrossEntropy
+from cleverhans.loss import CrossEntropy, CrossEntropyDefence
 from cleverhans.dataset import MNIST
 from cleverhans.utils_tf import model_eval
 from cleverhans.train import train
@@ -159,9 +159,10 @@ def mnist_tutorial(train_start=0, train_end=60000, test_start=0,
   def attack(x):
     return fgsm2.generate(x, **fgsm_params)
 
-  loss2 = CrossEntropy(model2, smoothing=label_smoothing, attack=attack)
+  # loss2 = CrossEntropy(model2, smoothing=label_smoothing, attack=attack)
   preds2 = model2.get_logits(x)
   adv_x2 = attack(x)
+  loss2 = CrossEntropyDefence(model2, x_advs=[adv_x2])
 
   if not backprop_through_attack:
     # For the fgsm attack used in this tutorial, the attack has zero
