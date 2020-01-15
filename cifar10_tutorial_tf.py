@@ -26,7 +26,7 @@ from cleverhans.utils_tf import model_eval
 
 FLAGS = flags.FLAGS
 
-NB_EPOCHS = 6
+NB_EPOCHS = 1
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
 CLEAN_TRAIN = True
