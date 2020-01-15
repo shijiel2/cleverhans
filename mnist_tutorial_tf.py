@@ -29,7 +29,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 FLAGS = flags.FLAGS
 
-NB_EPOCHS = 6
+NB_EPOCHS = 3
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
 CLEAN_TRAIN = True
